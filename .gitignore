@@ -1,0 +1,16 @@
+*.pyc
+*.pyc
+*.swo
+*.swp
+*.swn
+*.gpg
+*~
+\#*
+tmp
+pip-log.txt
+build
+dropin.cache
+scrapy.db
+
+*.json
+*.jsonlines

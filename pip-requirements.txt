@@ -1,0 +1,9 @@
+Twisted>=10.0,<10.1
+scrapy>=0.10,<0.11
+simplejson>=2.1,<2.2
+BeautifulSoup>=3.0.8,<3.1
+
+# useful things, get these.
+#ipython==0.10
+#ipdb==0.1
+#wtf==0.1

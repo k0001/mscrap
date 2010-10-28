@@ -1,4 +1,5 @@
-# -*- coding: utf8 -*- import re
+# -*- coding: utf8 -*-
+import re
 from functools import partial
 from urlparse import urljoin, parse_qs, urlparse
 
@@ -8,6 +9,9 @@ from scrapy.selector import HtmlXPathSelector
 from scrapy.spider import BaseSpider
 
 from mscrap.items import LegisladorItem
+
+_RE_BLOQUE = re.compile(r'Bloque (.*)')
+_RE_MANDATO_PERIODO = re.compile(ur'Período (\d{2}/\d{2}/\d{4}) - (\d{2}/\d{2}/\d{4})')
 
 
 class SenadoresSpider(BaseSpider):
@@ -42,26 +46,21 @@ class SenadoresSpider(BaseSpider):
 
     def _parse_senador_bio_page(self, response, l):
         hxs = HtmlXPathSelector(response)
-        _t = hxs.select(r'//tbody/tr/td[3]/table/tbody/tr/td/table/tbody/tr[5]/td/table/tbody/tr/td/table/tbody')
+        _t = hxs.select(r'//td[@class="titulos"]/parent::tr[1]/following-sibling::*/td/table')
 
         # Bloque
-        l.add_xpath('bloque_nombre',
-            'tr[2]//text()',
-            re=r'Bloque (.*)')
+        s = _t.select('.//tr[2]//text()').extract()[0]
+        l.add_value('bloque_nombre', _RE_BLOQUE.search(s).group(1))
 
-        # Mandato inicio
-        l.add_xpath('mandato_inicio',
-            'tr[3]//text()',
-            re=ur'Período (\d{2}/\d{2}/\d{4})')
-
-        # Mandato fin
-        l.add_xpath('mandato_fin',
-            'tr[3]//text()',
-            re=ur'Período .* - (\d{2}/\d{2}/\d{4})')
+        # Mandato
+        s = _t.select('.//tr[4]//text()').extract()[0]
+        mandato_inicio, mandato_fin = _RE_MANDATO_PERIODO.search(s).groups()
+        l.add_value('mandato_inicio', mandato_inicio)
+        l.add_value('mandato_fin', mandato_fin)
 
         # Email
-        l.add_xpath('email',
-            'tr[6]//a[@class="textolink"]/text()')
+        s = _t.select('.//tr[6]//a[@class="textolink"]/text()').extract()[0]
+        l.add_value('email', s)
 
         # Foto
         s = hxs.select('//img[starts-with(@src, "fsena/")]/@src').extract()[0].strip()

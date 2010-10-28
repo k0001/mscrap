@@ -10,7 +10,7 @@ from mscrap.utils import fix_space, spanish_date, format_personal_name, normaliz
                          normalize_camara, normalize_proyecto_origen, normalize_codigo_expediente, \
                          normalize_orden_del_dia, digits_only, normalize_codigo_mensaje, \
                          normalize_tipo_proyecto, normalize_firmante_special, normalize_poder, \
-                         normalize_publicacion_en # <-- what a mess D:
+                         normalize_publicacion_en, normalize_bloque_name # <-- what a mess D:
 from mscrap.items import LegisladorItem, ProyectoItem, FirmaProyectoItem, TramiteProyectoItem, \
                          DictamenProyectoItem
 
@@ -24,6 +24,7 @@ class LegisladorItemLoader(XPathItemLoader):
     nombre_in = MapCompose(fix_space, format_personal_name)
     camara_in = MapCompose(fix_space, unicode.strip, normalize_camara)
     distrito_nombre_in = MapCompose(fix_space, unicode.strip, normalize_distrito_name)
+    bloque_nombre_in = MapCompose(fix_space, unicode.strip, normalize_bloque_name)
 
     mandato_inicio_in = MapCompose(fix_space, unicode.strip, spanish_date)
     mandato_inicio_out = Compose(lambda v: v[0].isoformat())
@@ -66,8 +67,9 @@ class FirmaProyectoItemLoader(XPathItemLoader):
     firmante_nombre_in = MapCompose(fix_space, format_personal_name)
     firmante_apellido_in = MapCompose(fix_space, format_personal_name)
     firmante_distrito_in = MapCompose(fix_space, unicode.strip, partial(normalize_distrito_name, allow_empty=True))
-    firmante_special = MapCompose(fix_space, unicode.strip, normalize_firmante_special)
-    firmante_poder = MapCompose(fix_space, unicode.strip, normalize_poder)
+    firmante_special_in = MapCompose(fix_space, unicode.strip, normalize_firmante_special)
+    firmante_poder_in = MapCompose(fix_space, unicode.strip, normalize_poder)
+    firmante_bloque_in = MapCompose(fix_space, unicode.strip, partial(normalize_bloque_name, allow_empty=True))
 
 
 class TramiteProyectoItemLoader(XPathItemLoader):

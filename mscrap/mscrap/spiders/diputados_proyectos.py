@@ -220,8 +220,8 @@ class DiputadosProyectosSpider(BaseSpider):
                 else:
                     fpl.add_value('firmante_poder', u'L')
 
-                # firmante_partido_nombre
-                fpl.add_xpath('firmante_partido',
+                # firmante_bloque_nombre
+                fpl.add_xpath('firmante_bloque',
                     'td[2][not(contains(., "PODER EJECUTIVO"))]/text()')
 
                 # firmante_distrito_nombre

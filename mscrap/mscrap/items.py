@@ -44,7 +44,7 @@ class FirmaProyectoItem(MscrapBaseItem):
     tipo_firma = Field()
     firmante_nombre = Field()
     firmante_apellido = Field()
-    firmante_partido = Field()
+    firmante_bloque = Field()
     firmante_poder = Field()
     firmante_distrito = Field()
     # A veces el que firma no es un tipo. Esto tiene prioridad ante el nombre.

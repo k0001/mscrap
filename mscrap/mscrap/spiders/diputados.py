@@ -50,7 +50,7 @@ class DiputadosSpider(BaseSpider):
         l.add_value('apellido', item_data['apellido'])
 
         l.add_xpath('foto_url', 'tr[1]/td[2]/img/@src')
-        l.add_xpath('partido_nombre', 'tr[3]/td[2]/text()')
+        l.add_xpath('bloque_nombre', 'tr[3]/td[2]/text()')
         l.add_xpath('distrito_nombre', 'tr[4]/td[1]/text()', re='Distrito:\xa0 ([a-zA-Z0-9 ]+)')
         l.add_xpath('mandato_inicio', 'tr[4]/td[2]/text()', re='(\d\d/\d\d/\d\d\d\d)')
         l.add_xpath('mandato_fin', 'tr[4]/td[2]/text()', re='(\d\d/\d\d/\d\d\d\d)$')

@@ -4,11 +4,14 @@
 
 
 import re
+import logging
 import time
 import unicodedata
 from datetime import date
 
 from mscrap import constants
+
+log = logging.getLogger(__name__)
 
 
 def first_or_value(l, value=u''):
@@ -27,9 +30,11 @@ def format_personal_name(text):
     return u' '.join(x.capitalize() for x in text.split())
 
 
+_rx_whitespace = re.compile(r'(\s)+')
 def fix_space(text):
-    """Replaces non-breaking space for normal space."""
-    return text.replace(u'\xa0', u' ')
+    """Replaces non-breaking space for normal space. Remove duplicate whitespace."""
+    text = text.strip().replace(u'\xa0', u' ').replace(u'\r\n', u'\n').replace(u'\r', u'\n')
+    return _rx_whitespace.sub(r'\1', text)
 
 
 def spanish_date(text, separator=None, allow_empty=False):
@@ -62,6 +67,22 @@ def normalize_distrito_name(text, allow_empty=False):
         return None
     k = unicodedata.normalize('NFD', text).encode('ascii', 'ignore').lower()
     return constants.DISTRITOS_NORM[k]
+
+def normalize_bloque_name(text, allow_empty=False):
+    """
+    Normalizes bloque names.
+
+    Prepends ':' to the given text if normalization not available.
+    """
+    text = fix_space(text)
+    if not text and allow_empty:
+        return None
+    k = unicodedata.normalize('NFD', text).encode('ascii', 'ignore').lower()
+    if k in constants.BLOQUES_NORM:
+        return constants.BLOQUES_NORM[k]
+    else:
+        log.warning(u"Bloque name not normalized: " + text)
+        return u":" + text
 
 def normalize_camara(text, allow_empty=False):
     """

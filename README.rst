@@ -1,6 +1,6 @@
 mscrap is a set of tools used for scrapping Argentine Congress data.
 
-You can find the latest version at `http://github.com/mediasancion/mscrap`_
+You can find the latest version at http://github.com/mediasancion/mscrap
 
 Along with this project, you should have recieved a file named ``LICENSE`` with the
 licensing terms`.

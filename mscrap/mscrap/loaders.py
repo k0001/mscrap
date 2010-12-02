@@ -6,13 +6,28 @@ from datetime import date
 from scrapy.contrib.loader import XPathItemLoader
 from scrapy.contrib.loader.processor import TakeFirst, MapCompose, Compose, Identity
 
-from mscrap.utils import fix_space, spanish_date, format_personal_name, normalize_distrito_name, \
-                         normalize_camara, normalize_proyecto_origen, normalize_codigo_expediente, \
-                         normalize_orden_del_dia, digits_only, normalize_codigo_mensaje, \
-                         normalize_tipo_proyecto, normalize_firmante_special, normalize_poder, \
-                         normalize_publicacion_en, normalize_bloque_name # <-- what a mess D:
 from mscrap.items import LegisladorItem, ProyectoItem, FirmaProyectoItem, TramiteProyectoItem, \
-                         DictamenProyectoItem
+                         DictamenProyectoItem, ActaVotacionItem
+
+from mscrap.utils import (
+        fix_space,
+        digits_only,
+        spanish_date,
+        format_personal_name,
+        normalize_distrito_name,
+        normalize_camara,
+        normalize_proyecto_origen,
+        normalize_codigo_expediente,
+        normalize_orden_del_dia,
+        normalize_codigo_mensaje,
+        normalize_tipo_proyecto,
+        normalize_firmante_special,
+        normalize_poder,
+        normalize_publicacion_en,
+        normalize_bloque_name,
+        normalize_sesion_tipo,
+        normalize_votacion_resultado,
+        normalize_votacion_tipo) # <-- what a mess D:
 
 
 class LegisladorItemLoader(XPathItemLoader):
@@ -96,3 +111,20 @@ class DictamenProyectoItemLoader(XPathItemLoader):
     fecha_out = Compose(lambda v: v[0].isoformat())
     orden_del_dia_in = MapCompose(fix_space, unicode.strip, normalize_orden_del_dia)
 
+
+class ActaVotacionItemLoader(XPathItemLoader):
+    default_item_class = ActaVotacionItem
+    default_input_processor = MapCompose(fix_space, unicode.strip)
+    default_output_processor = TakeFirst()
+
+    camara_in = MapCompose(fix_space, unicode.strip, normalize_camara)
+    tipo_in = MapCompose(fix_space, unicode.strip, normalize_votacion_tipo)
+    resultado_in = MapCompose(fix_space, unicode.strip, normalize_votacion_resultado)
+    reunion_fecha_in = MapCompose(fix_space, unicode.strip, partial(spanish_date, allow_empty=True))
+    reunion_fecha_out = Compose(lambda v: v[0].isoformat())
+    sesion_tipo_in = MapCompose(fix_space, unicode.strip, normalize_sesion_tipo)
+
+    sesion_numero_in = MapCompose(digits_only)
+    reunion_numero_in = MapCompose(digits_only)
+    year_inicio_in = MapCompose(digits_only)
+    year_fin_in = MapCompose(digits_only)

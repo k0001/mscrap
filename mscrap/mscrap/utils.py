@@ -13,6 +13,13 @@ from mscrap import constants
 
 log = logging.getLogger(__name__)
 
+def un(text, lower=True, fix_whitespace=True):
+    s = unicodedata.normalize('NFD', text).encode('ascii', 'ignore')
+    if lower:
+        s = s.lower()
+    if fix_whitespace:
+        s = fix_space(s)
+    return s
 
 def first_or_value(l, value=u''):
     """ first element of l if len(l) > 0 or value """
@@ -31,28 +38,30 @@ def format_personal_name(text):
 
 
 _rx_whitespace = re.compile(r'(\s)+')
-def fix_space(text):
+def fix_space(text, spaces_only=False):
     """Replaces non-breaking space for normal space. Remove duplicate whitespace."""
     text = text.strip().replace(u'\xa0', u' ').replace(u'\r\n', u'\n').replace(u'\r', u'\n')
-    return _rx_whitespace.sub(r'\1', text)
+    if spaces_only:
+        return _rx_whitespace.sub(r' ', text)
+    else:
+        return _rx_whitespace.sub(r'\1', text)
 
 
+_rx_spanish_date = re.compile(r'(\d{1,2})[-/](\d{1,2})[-/](\d{2}|\d{4})')
 def spanish_date(text, separator=None, allow_empty=False):
     """
-    Parses a date string DD/MM/YYYY into a datetime.date object.
+    Parses a date string DD/MM/YY[YY] into a datetime.date object.
 
     If separator==None, then try to use separators: '/', '-', ''
     """
     if not text and allow_empty:
         return None
-    separators = [separator] if separator else ('/', '-', '')
-    for s in separators:
-        fmt = '%d' + s + '%m' + s + '%Y'
-        try:
-            return date.fromtimestamp(time.mktime(time.strptime(text, fmt)))
-        except ValueError:
-            pass
-    raise ValueError(text)
+    m = _rx_spanish_date.match(text)
+    if not m:
+        raise ValueError(text)
+    return date(year=normalize_year(m.group(3)),
+                month=int(m.group(2)),
+                day=int(m.group(1)))
 
 def dict_values_composer(compose):
     """Returns a function that, when called on a dict, applies ``compose`` to every dict value"""
@@ -142,6 +151,8 @@ def normalize_codigo_expediente(text, allow_empty=False):
 _rx_digits = re.compile(r'\d+')
 def digits_only(text):
     """Keeps only the digits found in the input text"""
+    if isinstance(text, int):
+        return unicode(text)
     return u''.join(_rx_digits.findall(text))
 
 
@@ -273,4 +284,57 @@ def normalize_publicacion_en(text, allow_empty=False):
 
 
 
+def normalize_sesion_tipo(text, allow_empty=False):
+    text = un(text.strip())
+    if not text and allow_empty:
+        return None
 
+    # XXX I'm pretty sure the next mapping is pure bullshit :)
+    m = {
+        'de tabla'                               : 'A',
+        'de tablas'                              : 'A',
+        'especial'                               : 'B',
+        'de prorroga'                            : 'C',
+        'en minoria'                             : 'D',
+        'de prorroga de tablas'                  : 'E',
+        'de prorroga especial'                   : 'F',
+        'especial de prorroga'                   : 'F',
+
+        'ordinaria de tabla'                     : 'G',
+        'ordinaria de tablas'                    : 'G',
+        'ordinaria especial'                     : 'H',
+        'ordinaria de prorroga'                  : 'I',
+        'ordinaria en minoria'                   : 'J',
+        'ordinaria de prorroga de tablas'        : 'K',
+        'ordinaria de prorroga especial'         : 'L',
+        'ordinaria especial de prorroga'         : 'L',
+
+        'extraordinaria de tabla'                : 'M',
+        'extraordinaria de tablas'               : 'M',
+        'extraordinaria especial'                : 'N',
+        'extraordinaria de prorroga'             : 'O',
+        'extraordinaria en minoria'              : 'P',
+        'extraordinaria de prorroga de tablas'   : 'Q',
+        'extraordinaria de prorroga especial'    : 'R',
+        'extraordinaria especial de prorroga'    : 'R', }
+    return m[text]
+
+def normalize_votacion_tipo(text, allow_empty=False):
+    x = un(text.strip())
+    if not x and allow_empty:
+        return None
+    if x in ('N', 'nominal'):
+        return 'N'
+    elif x in ('R', 'numerica'):
+        return 'R'
+    raise ValueError(text)
+
+def normalize_votacion_resultado(text, allow_empty=False):
+    x = un(text.strip())
+    if not x and allow_empty:
+        return None
+    if x in ('A', 'afirmativa'):
+        return 'A'
+    elif x in ('N', 'negativa'):
+        return 'N'
+    raise ValueError(text)

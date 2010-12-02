@@ -32,3 +32,4 @@ class MscrapPipeline(object):
     def _item_save(self, item):
         # TODO
         pass
+

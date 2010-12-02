@@ -89,3 +89,16 @@ class ProyectoItem(MscrapBaseItem):
     comisiones_diputados = Field()
     comisiones_senadores = Field()
 
+class ActaVotacionItem(MscrapBaseItem):
+    camara = Field()
+    acta_pdf_url = Field()
+    tipo = Field() # nominal, numerica
+    resultado = Field()
+    sesion_numero = Field()
+    sesion_tipo = Field()
+    reunion_numero = Field()
+    reunion_fecha = Field()
+    year_inicio = Field()
+    year_fin = Field()
+    acta_descripcion = Field()
+

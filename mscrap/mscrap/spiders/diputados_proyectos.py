@@ -26,7 +26,7 @@ _RE_MENSAJE_CODIGO = re.compile(r'mensaje .*?(\d+/\d+)')
 
 class DiputadosProyectosSpider(BaseSpider):
     name = 'diputados_proyectos'
-    allowed_domains = "www1.hcdn.gov.ar",
+    allowed_domains = ["www1.hcdn.gov.ar"]
 
     def start_requests(self):
         # parece que quieren que tenga una cookie de sesion.

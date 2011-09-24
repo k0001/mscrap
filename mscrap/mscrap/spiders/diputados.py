@@ -15,7 +15,7 @@ _RE_RESOURCE_ID = re.compile(r'http://webappl.hcdn.gov.ar/diputados/([-\w]+)')
 
 class DiputadosSpider(BaseSpider):
     name = 'diputados'
-    allowed_domains = 'webappl.hcdn.gov.ar',
+    allowed_domains = ['webappl.hcdn.gov.ar']
     start_urls = 'http://webappl.hcdn.gov.ar/diputados/listadodiputados.html',
 
     def parse(self, response):

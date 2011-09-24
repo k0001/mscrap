@@ -32,7 +32,7 @@ _RE_PERIODO = re.compile(r"periodo (?P<periodo_num>\d+) - ano (?P<year_inicio>\d
 
 class DiputadosVotacionesSpider(BaseSpider):
     name = 'diputados_votaciones'
-    allowed_domains = 'www1.hcdn.gov.ar',
+    allowed_domains = ['www1.hcdn.gov.ar']
     start_urls = [
         'http://www1.hcdn.gov.ar/dependencias/dselectronicos/actas/2010/actas2010.htm',
         'http://www1.hcdn.gov.ar/dependencias/dselectronicos/actas/2009/actas2009.htm',

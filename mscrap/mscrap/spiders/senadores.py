@@ -16,7 +16,7 @@ _RE_MANDATO_PERIODO = re.compile(ur'Período (\d{2}/\d{2}/\d{4}) - (\d{2}/\d{2}/
 
 class SenadoresSpider(BaseSpider):
     name = 'senadores'
-    allowed_domains = 'senado.gov.ar',
+    allowed_domains = ['senado.gov.ar']
     start_urls = [
         "http://www.senado.gov.ar/web/senadores/senadores.php?iOrden=0&iSen=ASC&Page=1&iPageSize=500"
     ]

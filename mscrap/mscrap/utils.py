@@ -47,7 +47,7 @@ def fix_space(text, spaces_only=False):
         return _rx_whitespace.sub(r'\1', text)
 
 
-_rx_spanish_date = re.compile(r'(\d{1,2})[-/](\d{1,2})[-/](\d{2}|\d{4})')
+_rx_spanish_date = re.compile(r'(\d{1,2})[-/](\d{1,2})[-/](\d{4}|\d{2})')
 def spanish_date(text, separator=None, allow_empty=False):
     """
     Parses a date string DD/MM/YY[YY] into a datetime.date object.

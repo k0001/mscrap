@@ -37,7 +37,7 @@ class DiputadosSpider(BaseSpider):
         hxs = HtmlXPathSelector(response)
         #uname =  urlsplit(response.url).path.split('/')[-1]
 
-        l = LegisladorItemLoader(selector=hxs.select("/html/body/div/div[3]/table/tbody"))
+        l = LegisladorItemLoader(selector=hxs.select('//div[@id="page"]//div[@class="primera"]'))
 
         l.add_value('id', item_data['resource_url']) # unique enough :)
 
@@ -49,13 +49,16 @@ class DiputadosSpider(BaseSpider):
         l.add_value('nombre', item_data['nombre'])
         l.add_value('apellido', item_data['apellido'])
 
-        l.add_xpath('foto_url', 'tr[1]/td[2]/img/@src')
-        l.add_xpath('bloque_nombre', 'tr[3]/td[2]/text()')
-        l.add_xpath('distrito_nombre', 'tr[4]/td[1]/text()', re='Distrito:\xa0 ([a-zA-Z0-9 ]+)')
-        l.add_xpath('mandato_inicio', 'tr[4]/td[2]/text()', re='(\d\d/\d\d/\d\d\d\d)')
-        l.add_xpath('mandato_fin', 'tr[4]/td[2]/text()', re='(\d\d/\d\d/\d\d\d\d)$')
-        l.add_xpath('email', 'tr[5]/td[2]/a/text()')
-        l.add_xpath('telefono', 'tr[5]/td[1]/text()', re='([-\d]+)')
+        l.add_xpath('foto_url', './/img[@alt="Foto del legislador"]/@src')
+        l.add_xpath('bloque_nombre', './/*[@class="quinto1"][3]/p/text()')
+        l.add_xpath('distrito_nombre', './/div[@class="cuarto1"]/p[contains(., "Distrito:")]/text()',
+                                       re='Distrito:\xa0 ([a-zA-Z0-9 ]+)')
+        l.add_xpath('mandato_inicio', './/div[@class="quinto1"]/p[contains(., "Mandato:")]/text()',
+                                      re=r'.*(\d\d/\d\d/\d\d\d\d)\xa0-.*')
+        l.add_xpath('mandato_fin', './/div[@class="quinto1"]/p[contains(., "Mandato:")]/text()',
+                                   re=r'.*-\xa0(\d\d/\d\d/\d\d\d\d)$')
+        l.add_xpath('email', './/div[@class="quinto1"]/p[contains(., "E-Mail:")]/a/text()')
+        l.add_xpath('telefono', './/div[@class="cuarto1"]/p[contains(., "Teléfono:")]/text()', re='([-\d]+)')
 
         yield l.load_item()
 

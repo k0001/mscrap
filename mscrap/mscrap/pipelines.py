@@ -1,3 +1,4 @@
+# coding: utf-8
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
@@ -5,7 +6,9 @@
 
 #from scrapy.contrib.exporter.jsonlines import JsonLinesItemExporter
 from scrapy import signals
+from scrapy.exceptions import DropItem
 from scrapy.xlib.pydispatch import dispatcher
+from mscrap.items import LegisladorItem
 
 
 class MscrapPipeline(object):
@@ -21,9 +24,18 @@ class MscrapPipeline(object):
         del self.duplicates[spider]
 
     def process_item(self, item, spider):
+        if not self._item_valid(item):
+            raise DropItem
         if not item['id'] in self.duplicates[spider] and not self._item_exists(item):
             self._item_save(item)
         return item
+
+    def _item_valid(self, item):
+        # ISSUE #1: Data for 'Perroni, Ana María' is unavailable.
+        if isinstance(item, LegisladorItem):
+            if item['apellido'] == u'Perroni' and item['nombre'] == u'Ana Maria':
+                return False
+        return True
 
     def _item_exists(self, item):
         # TODO

@@ -15,7 +15,7 @@ import os
 _HERE_DIR = os.path.dirname(os.path.abspath(__file__))
 _ROOT_DIR = os.path.join(_HERE_DIR, '..')
 
-LOG_LEVEL = 'WARNING'
+LOG_LEVEL = 'INFO'
 
 BOT_NAME = 'mscrap'
 BOT_VERSION = '1.0'

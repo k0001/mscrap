@@ -68,6 +68,7 @@ class DictamenProyectoItem(MscrapBaseItem):
     orden_del_dia = Field()
     fecha = Field()
     resultado = Field()
+    index = Field()
 
 
 class ProyectoItem(MscrapBaseItem):

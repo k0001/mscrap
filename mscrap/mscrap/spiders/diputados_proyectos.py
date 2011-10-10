@@ -32,17 +32,17 @@ class DiputadosProyectosSpider(BaseSpider):
         # parece que quieren que tenga una cookie de sesion.
         yield Request("http://www1.hcdn.gov.ar/proyectos_search/qryfrmg_combo.asp", callback=lambda r: None)
         yield FormRequest("http://www1.hcdn.gov.ar/proyectos_search/proyectosd.asp?giro_giradoA=&odanno=&" \
-                          "pageorig=1&fromForm=1&whichpage=1&fecha_inicio=01/03/2005&fecha_fin=22/05/2010",
-                          formdata={'anio_fin': '2010',
+                          "pageorig=1&fromForm=1&whichpage=1&fecha_inicio=01/01/2005&fecha_fin=31/12/2011",
+                          formdata={'dia_fin': '31',
+                                    'mes_fin': '12',
+                                    'anio_fin': '2020',
+                                    'mes_inicio': '01',
+                                    'dia_inicio': '01',
                                     'anio_inicio': '2005',
                                     'chkcomisiones': 'on',
                                     'chkdictamenes': 'on',
                                     'chkfirmantes': 'on',
                                     'chktramite': 'on',
-                                    'dia_fin': '22',
-                                    'dia_inicio': '01',
-                                    'mes_fin': '05',
-                                    'mes_inicio': '03',
                                     'ordenar': '3',
                                     'pagesize': '200',
                                     'selcomision': '0',
@@ -254,8 +254,11 @@ class DiputadosProyectosSpider(BaseSpider):
 
 
             # Dictamenes
-            for tr in ul.select('child::*//table//td[contains(., "DICTAMENES DE COMISION:")]//parent::tr/following-sibling::tr'):
+            for i,tr in enumerate(ul.select('child::*//table//td[contains(., "DICTAMENES DE COMISION:")]//parent::tr/following-sibling::tr')):
                 dpl = DictamenProyectoItemLoader(selector=tr)
+
+                # index: we keep this value so that we can later sort this dictamenes list.
+                dpl.add_value('index', '%s' % i)
 
                 # proyecto
                 dpl.add_value('proyecto_camara_origen', camara_origen)

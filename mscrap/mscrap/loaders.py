@@ -110,6 +110,7 @@ class DictamenProyectoItemLoader(XPathItemLoader):
     fecha_in = MapCompose(fix_space, unicode.strip, partial(spanish_date, allow_empty=True))
     fecha_out = Compose(lambda v: v[0].isoformat())
     orden_del_dia_in = MapCompose(fix_space, unicode.strip, normalize_orden_del_dia)
+    index_in = MapCompose(digits_only)
 
 
 class ActaVotacionItemLoader(XPathItemLoader):

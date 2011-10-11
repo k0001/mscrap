@@ -58,6 +58,7 @@ class TramiteProyectoItem(MscrapBaseItem):
     descripcion = Field()
     fecha = Field()
     resultado = Field()
+    index = Field()
 
 
 class DictamenProyectoItem(MscrapBaseItem):

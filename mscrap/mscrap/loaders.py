@@ -97,6 +97,7 @@ class TramiteProyectoItemLoader(XPathItemLoader):
     camara_in = MapCompose(fix_space, unicode.strip, normalize_camara)
     fecha_in = MapCompose(fix_space, unicode.strip, partial(spanish_date, allow_empty=True))
     fecha_out = Compose(lambda v: v[0].isoformat())
+    index_in = MapCompose(digits_only)
 
 
 class DictamenProyectoItemLoader(XPathItemLoader):

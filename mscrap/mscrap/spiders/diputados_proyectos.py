@@ -294,8 +294,11 @@ class DiputadosProyectosSpider(BaseSpider):
                 yield dpl.load_item()
 
             # Tramites
-            for tr in ul.select('child::*//table//td[contains(., "TRAMITE:")]//parent::tr/following-sibling::tr'):
+            for i,tr in enumerate(ul.select('child::*//table//td[contains(., "TRAMITE:")]//parent::tr/following-sibling::tr')):
                 tpl = TramiteProyectoItemLoader(selector=tr)
+
+                # index: we keep this value so that we can later sort this tramites list.
+                tpl.add_value('index', '%s' % i)
 
                 # proyecto
                 tpl.add_value('proyecto_camara_origen', camara_origen)

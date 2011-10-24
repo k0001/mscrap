@@ -91,7 +91,7 @@ def normalize_bloque_name(text, allow_empty=False):
         return constants.BLOQUES_NORM[k]
     else:
         log.warning(u"Bloque name not normalized: " + text)
-        return u":" + text
+        return u"NOT_NORMALIZED::" + text
 
 def normalize_camara(text, allow_empty=False):
     """

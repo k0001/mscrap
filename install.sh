@@ -15,12 +15,12 @@ LIBXML2_VER="2.7.3" # <-- will be installed inside the virtualenv
 
 # U CANT TOUCH THIS
 
-[[ `id -u` == 0 ]] && die "You are root daw, not nice!"
+[[ `id -u` == 0 ]] && die "You are root, not nice!"
 
 trap "exit 1;" TERM INT
 
 function die() {
-    echo "You daw! $1" > /dev/stderr
+    echo "Error! $1" > /dev/stderr
     exit 1;
 }
 
@@ -28,15 +28,15 @@ HERE_PATH="`dirname $0`"
 DEST_PATH="$1"
 
 [[ -z "$DEST_PATH" ]] && die "You need to give me a path for you new virtualenv"
-[[ -e "$DEST_PATH" ]] && die "There's something in $1, remove it daw."
+[[ -e "$DEST_PATH" ]] && die "There's something in $1, remove it"
 
-echo "Doing 'The Shit' in $DEST_PATH"
-echo "Don't worry, won't touch shit outside that dir."
+echo "Installing all in $DEST_PATH"
+echo "Don't worry, won't touch stuff outside that dir."
 echo "Starting in 3 seconds..."
 sleep 3
 echo "OK GO!"
 
-mkdir -p "$DEST_PATH" || die "Can't write to $DEST_PATH daw!"
+mkdir -p "$DEST_PATH" || die "Can't write to $DEST_PATH"
 
 
 # Setup & start virtualenv
@@ -45,7 +45,7 @@ source "$DEST_PATH/bin/activate"
 
 # Install libxml2
 TMPDIR=`mktemp -d --suffix=".libxml2-${LIBXML2_VER}"`
-mkdir -p "$TMPDIR" || die "Can't write to $TMPDIR daw!"
+mkdir -p "$TMPDIR" || die "Can't write to $TMPDIR"
 pushd $TMPDIR
 echo "Building libxml2-${LIBXML2_VER} in $PWD"
 wget ftp://ftp.xmlsoft.org/libxml2/libxml2-${LIBXML2_VER}.tar.gz
@@ -65,5 +65,5 @@ for dep in `grep -e "^\w" "$HERE_PATH/pip-requirements.txt"`; do
     $PIP_BIN install -E "$VIRTUAL_ENV" "$dep"
 done
 
-echo "Done daw! Your virtualenv and shit is ready at $VIRTUAL_ENV"
+echo "Done! Your virtualenv and stuff is ready at $VIRTUAL_ENV"
 exit 0

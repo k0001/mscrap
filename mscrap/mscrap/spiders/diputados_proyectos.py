@@ -30,9 +30,12 @@ class DiputadosProyectosSpider(BaseSpider):
 
     def start_requests(self):
         # parece que quieren que tenga una cookie de sesion.
+
+
+
         yield Request("http://www1.hcdn.gov.ar/proyectos_search/qryfrmg_combo.asp", callback=lambda r: None)
-        yield FormRequest("http://www1.hcdn.gov.ar/proyectos_search/proyectosd.asp?giro_giradoA=&odanno=&" \
-                          "pageorig=1&fromForm=1&whichpage=1&fecha_inicio=01/01/2005&fecha_fin=31/12/2011",
+        yield FormRequest("http://www1.hcdn.gov.ar/proyectos_search/resultado.asp?giro_giradoA=&odanno=&" \
+                          "fromForm=1&whichpage=1&fecha_inicio=01/01/2005&fecha_fin=31/12/2013&pageorig=1",
                           formdata={'dia_fin': '31',
                                     'mes_fin': '12',
                                     'anio_fin': '2020',
@@ -54,7 +57,7 @@ class DiputadosProyectosSpider(BaseSpider):
         pages_qty = hxs.select('//*[contains(.,"Página 1 de")]').re('de (\d+)')[0]
 
         for p in xrange(int(pages_qty)):
-            yield Request("http://www1.hcdn.gov.ar/proyectos_search/proyectosd.asp?pagesize=50&giro_giradoA=&" \
+            yield Request("http://www1.hcdn.gov.ar/proyectos_search/proyectosd.asp?pagesize=200&giro_giradoA=&" \
                           "chkFirmantes=on&chkTramite=on&chkDictamenes=on&chkComisiones=on&titulo=&tipo_de_proy=&" \
                           "diputado=&ultResultado=&ordenar=3&pageorig=1&whichpage=%s" % (p+1),
                           callback=self.parse_proyectos)
@@ -62,11 +65,11 @@ class DiputadosProyectosSpider(BaseSpider):
 
 
     def parse_proyectos(self, response):
-        # el html de diputados.gov.ar es TAN asqueroso que tengo que prettifiarlo con BeautifulSoup
-        # antes de poder consultarlo con XPath
+        # prettify using BeautifulSoup before use
         hxs = HtmlXPathSelector(text=BeautifulSoup(response.body).prettify())
 
-        for ul in hxs.select('//body/ul[contains(@class, "toc")]'):
+
+        for ul in hxs.select('//*[contains(@class, "texto_a")]/following-sibling::ul'):
             l = ProyectoItemLoader(selector=ul)
 
 
